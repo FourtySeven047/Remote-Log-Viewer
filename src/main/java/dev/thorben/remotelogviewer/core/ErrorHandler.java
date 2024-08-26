@@ -18,6 +18,10 @@ public class ErrorHandler {
         appendLog(e);
     }
     
+    public static void handleFatal(Exception e) {
+        handle(e, "Fatal Error: " + e.getMessage());
+    }
+    
     private static void appendLog(Exception e) {
         
     }
