@@ -4,7 +4,13 @@
  */
 package dev.thorben.remotelogviewer.core;
 
-import dev.thorben.remotelogviewer.frames.ErrorFrame;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,8 +19,8 @@ import dev.thorben.remotelogviewer.frames.ErrorFrame;
 public class ErrorHandler {
     
     public static void handle(Exception e, String message) {
-        ErrorFrame frame = new ErrorFrame();
-        frame.setErrorMessage(message);
+        JOptionPane.showOptionDialog(null, message, "Error", JOptionPane.DEFAULT_OPTION,
+        JOptionPane.INFORMATION_MESSAGE, null, null, null);
         appendLog(e);
     }
     
@@ -23,6 +29,31 @@ public class ErrorHandler {
     }
     
     private static void appendLog(Exception e) {
-        
+        try {
+            createLog();
+            FileWriter createFile;
+            createFile = new FileWriter("src/main/resources/application_log.txt", true);
+            createFile.append(LocalTime.now().toString() + "\t" + e.getLocalizedMessage() + "\n");
+            createFile.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ErrorHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void createLog() {
+        if (hasLog()) return;
+        try {
+            FileWriter createFile;
+            createFile = new FileWriter("src/main/resources/application_log.txt");
+            createFile.write("");
+            createFile.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ErrorHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private static boolean hasLog() {
+        File file = new File("src/main/resources/application_log.txt");
+        return file.exists();
     }
 }
