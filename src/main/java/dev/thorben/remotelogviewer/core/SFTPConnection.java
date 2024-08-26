@@ -10,6 +10,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import dev.thorben.remotelogviewer.RemoteLogViewer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +32,6 @@ public class SFTPConnection {
     //private SFTPClient sftpClient;
     private Session session;
     private ChannelSftp sftp;
-         
 
     public SFTPConnection(String remoteHost, int remotePort, String username, String password) {
         this.remoteHost = remoteHost;
@@ -58,6 +58,7 @@ public class SFTPConnection {
             session.connect();
             Channel channel = session.openChannel("sftp");
             channel.connect();
+            RemoteLogViewer.setLogConnection(this);
             this.sftp = (ChannelSftp) sftp;
         } catch (JSchException ex) {
             Logger.getLogger(SFTPConnection.class.getName()).log(Level.SEVERE, null, ex);
