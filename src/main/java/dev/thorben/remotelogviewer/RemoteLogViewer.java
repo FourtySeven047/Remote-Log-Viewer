@@ -17,7 +17,6 @@ public class RemoteLogViewer {
     
     public static void main(String[] args) { 
         new MainFrame().setVisible(true);
-        System.out.println("Hello World!");
     }
     
     public static void setLogConnection(SFTPConnection sftpConnection) {
