@@ -10,9 +10,8 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
-import dev.thorben.remotelogviewer.monitors.SFTPProgressBarMonitor;
-import java.io.IOException;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -41,51 +40,61 @@ public class SFTPConnection {
         this.password = password;
     }
 
-    public void connect() throws IOException, JSchException {
-        /*
-        System.out.println("----- remoteHost: " + remoteHost + ", remotePort: " + remotePort + ", username: " + username + ", password: " + password);
-        SSHClient client = new SSHClient();
-        client.addHostKeyVerifier(new PromiscuousVerifier());
-        client.connect(remoteHost, remotePort);
-        client.useCompression();
-        client.authPassword(username, password);
-        sshClient = client;
-        sftpClient = sshClient.newSFTPClient();
-        */
-        JSch jsch = new JSch();
-        jsch.setKnownHosts("/Users/thorbenbuenger/.ssh/known_hosts");
-        session = jsch.getSession(username, remoteHost, remotePort);
-        session.setPassword(password);
-        session.connect();
-        Channel sftp = session.openChannel("sftp");
-        sftp.connect();
-        this.sftp = (ChannelSftp) sftp;
+    public void connect() {
+        try {
+            /*
+            System.out.println("----- remoteHost: " + remoteHost + ", remotePort: " + remotePort + ", username: " + username + ", password: " + password);
+            SSHClient client = new SSHClient();
+            client.addHostKeyVerifier(new PromiscuousVerifier());
+            client.connect(remoteHost, remotePort);
+            client.useCompression();
+            client.authPassword(username, password);
+            sshClient = client;
+            sftpClient = sshClient.newSFTPClient();*/
+            JSch jsch = new JSch();
+            jsch.setKnownHosts("/Users/thorbenbuenger/.ssh/known_hosts");
+            session = jsch.getSession(username, remoteHost, remotePort);
+            session.setPassword(password);
+            session.connect();
+            Channel channel = session.openChannel("sftp");
+            channel.connect();
+            this.sftp = (ChannelSftp) sftp;
+        } catch (JSchException ex) {
+            Logger.getLogger(SFTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
+        }
     }
 
-    public void disconnect() throws IOException {
+    public void disconnect() {
         session.disconnect();
         sftp.disconnect();
     }
-
-    public void download(String localPath, String remoteFile, SFTPProgressBarMonitor monitor) throws IOException, JSchException, SftpException {
-        sftp.get(remoteFile, localDirectory + "latest.log", monitor);
-        System.out.println("Werde ich schon davor ausgeführt?");
-        //sftpClient.get(remoteFile, localDirectory + "latest.log");
-    }
     
-    public void download(String remoteFile) throws IOException, JSchException, SftpException {
-        sftp.get(remoteFile, localDirectory + "latest.log");
-        System.out.println("Werde ich schon davor ausgeführt?");
-        //sftpClient.get(remoteFile, localDirectory + "latest.log");
+    public void download(String remoteFile)  {
+        try {
+            sftp.get(remoteFile, localDirectory + "latest.log");
+        } catch (SftpException ex) {
+            Logger.getLogger(SFTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
+        }
     }
 
-    public void download(String localPath, String remoteFile) throws IOException, SftpException, JSchException {
-        sftp.get(remoteFile, localPath);
-        System.out.println("Werde ich schon davor ausgeführt?");
+    public void download(String localPath, String remoteFile) {
+        try {
+            sftp.get(remoteFile, localPath);
+        } catch (SftpException ex) {
+            Logger.getLogger(SFTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
+        }
     }
 
-    public void upload(String localFile, String remotePath) throws SftpException {
-        sftp.put(localFile, remotePath);
+    public void upload(String localFile, String remotePath) {
+        try {
+            sftp.put(localFile, remotePath);
+        } catch (SftpException ex) {
+            Logger.getLogger(SFTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
+        }
     }
 
 }

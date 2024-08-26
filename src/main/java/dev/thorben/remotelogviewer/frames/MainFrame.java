@@ -1,13 +1,12 @@
 package dev.thorben.remotelogviewer.frames;
 
 import dev.thorben.remotelogviewer.RemoteLogViewer;
+import dev.thorben.remotelogviewer.core.ErrorHandler;
 import dev.thorben.remotelogviewer.core.SFTPConnection;
-import dev.thorben.remotelogviewer.monitors.SFTPProgressBarMonitor;
 import dev.thorben.remotelogviewer.utils.JSONCredentialUtility;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -517,11 +516,8 @@ public class MainFrame extends javax.swing.JFrame {
         if(RemoteLogViewer.getFileConnection() == null) {
             return;
         }
-        try {
-            RemoteLogViewer.getFileConnection().upload(jFormattedTextField15.getText(), jFormattedTextField14.getText());
-        } catch (Exception ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        RemoteLogViewer.getFileConnection().upload(jFormattedTextField15.getText(), jFormattedTextField14.getText());
+
         JSONCredentialUtility.saveFileCredentials(JSONCredentialUtility.getFileHostName(), JSONCredentialUtility.getFilePort(), 
                 JSONCredentialUtility.getFileUserName(), JSONCredentialUtility.getFilePassword(), 
                 jFormattedTextField15.getText(), jFormattedTextField14.getText());
@@ -546,12 +542,8 @@ public class MainFrame extends javax.swing.JFrame {
         String password = String.valueOf(jPasswordField2.getPassword());
 
         SFTPConnection connection = new SFTPConnection(hostname, port, username, password);
-        try {
-            connection.connect();
-            RemoteLogViewer.setFileConnection(connection);
-        } catch (Exception ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        connection.connect();
+        RemoteLogViewer.setFileConnection(connection);
         JSONCredentialUtility.saveFileCredentials(hostname, port, username, password, hostname, hostname);
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -575,12 +567,8 @@ public class MainFrame extends javax.swing.JFrame {
         String password = String.valueOf(jPasswordField1.getPassword());
 
         SFTPConnection connection = new SFTPConnection(hostname, port, username, password);
-        try {
-            connection.connect();
-            RemoteLogViewer.setLogConnection(connection);
-        } catch (Exception ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        connection.connect();
+        RemoteLogViewer.setLogConnection(connection);
         JSONCredentialUtility.saveLogCredentials(hostname, port, username, password, JSONCredentialUtility.getLogRemotePath());
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -599,26 +587,21 @@ public class MainFrame extends javax.swing.JFrame {
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         // TODO add your handling code here:
         if (jToggleButton1.getText().equals("Start")) {
-            Runnable helloRunnable = new Runnable() {
-                public void run() {
-                    try {
-                        RemoteLogViewer.getLogConnection().download(jFormattedTextField4.getText());
-                    } catch (Exception ex) {
-                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            Runnable helloRunnable = () -> {
+                try {
+                    RemoteLogViewer.getLogConnection().download(jFormattedTextField4.getText());
                     String stringToAppend = "";
-                    try {
-                        Scanner scanner = new Scanner(new File("src/main/resources/latest.log"));
-                        int count = 1;
-                        while (scanner.hasNextLine()) {
-                            stringToAppend += count + ". " + scanner.nextLine() + "\n";
-                            count++;
-                        }
-                        System.out.println("blabla");
-                        jTextArea1.setText(stringToAppend);
-                    } catch (Exception e) {
-                        java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
+                    Scanner scanner = new Scanner(new File("src/main/resources/latest.log"));
+                    int count = 1;
+                    while (scanner.hasNextLine()) {
+                        stringToAppend += count + ". " + scanner.nextLine() + "\n";
+                        count++;
                     }
+                    System.out.println("blabla");
+                    jTextArea1.setText(stringToAppend);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    ErrorHandler.handleFatal(ex);
                 }
             };
             executor.scheduleAtFixedRate(helloRunnable, 0, 3, TimeUnit.SECONDS);
@@ -653,8 +636,9 @@ public class MainFrame extends javax.swing.JFrame {
                 count++;
             }
 
-        } catch (Exception ex) {
+        } catch (FileNotFoundException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -663,7 +647,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jFormattedTextField14ActionPerformed
 
     public void updateLog() {
-        jTextArea1.setText("");
+        jTextArea1.setText("Log");
     }
     
         
