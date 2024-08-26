@@ -31,7 +31,6 @@ public class JSONCredentialUtility {
             FileWriter writer = new FileWriter("src/main/resources/log_credentials.json");
             writer.write(jsonObject.toJSONString());
             writer.close();
-            
         } catch (IOException ex) {
             Logger.getLogger(JSONCredentialUtility.class.getName()).log(Level.SEVERE, null, ex);
         }   

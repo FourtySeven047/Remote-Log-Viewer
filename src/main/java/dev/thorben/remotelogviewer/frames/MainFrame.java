@@ -600,7 +600,6 @@ public class MainFrame extends javax.swing.JFrame {
                         stringToAppend += count + ". " + scanner.nextLine() + "\n";
                         count++;
                     }
-                    System.out.println("blabla");
                     jTextArea1.setText(stringToAppend);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);

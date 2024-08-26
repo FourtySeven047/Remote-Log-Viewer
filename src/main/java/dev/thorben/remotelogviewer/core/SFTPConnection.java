@@ -25,11 +25,8 @@ public class SFTPConnection {
     private String username = "user";
     private String password = "";
 
-    //private String remoteFile = "latest.log";
     private final String localDirectory = "src/main/resources/";
 
-    //private SSHClient sshClient;
-    //private SFTPClient sftpClient;
     private Session session;
     private ChannelSftp sftp;
 
@@ -42,15 +39,6 @@ public class SFTPConnection {
 
     public void connect() {
         try {
-            /*
-            System.out.println("----- remoteHost: " + remoteHost + ", remotePort: " + remotePort + ", username: " + username + ", password: " + password);
-            SSHClient client = new SSHClient();
-            client.addHostKeyVerifier(new PromiscuousVerifier());
-            client.connect(remoteHost, remotePort);
-            client.useCompression();
-            client.authPassword(username, password);
-            sshClient = client;
-            sftpClient = sshClient.newSFTPClient();*/
             JSch jsch = new JSch();
             jsch.setKnownHosts("/Users/thorbenbuenger/.ssh/known_hosts");
             session = jsch.getSession(username, remoteHost, remotePort);
