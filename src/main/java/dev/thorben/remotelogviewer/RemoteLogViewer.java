@@ -3,8 +3,10 @@
  */
 package dev.thorben.remotelogviewer;
 
+import dev.thorben.remotelogviewer.core.ErrorHandler;
 import dev.thorben.remotelogviewer.core.SFTPConnection;
 import dev.thorben.remotelogviewer.frames.MainFrame;
+import dev.thorben.remotelogviewer.utils.JSONSettingUtility;
 
 /**
  *
@@ -16,6 +18,8 @@ public class RemoteLogViewer {
     private static SFTPConnection fileConnection = null;
     
     public static void main(String[] args) { 
+        ErrorHandler.createLog();
+        JSONSettingUtility.createConfigFile();
         new MainFrame().setVisible(true);
     }
     
