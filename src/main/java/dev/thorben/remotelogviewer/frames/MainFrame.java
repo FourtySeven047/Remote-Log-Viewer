@@ -106,6 +106,10 @@ public class MainFrame extends javax.swing.JFrame {
         jButton6 = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         jMenu1.setText("jMenu1");
 
@@ -130,6 +134,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
         jScrollPane1.setViewportView(jTextArea1);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Actions"));
@@ -507,6 +512,18 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTabbedPane4.addTab("File Uploader", jPanel5);
 
+        jMenu3.setText("Settings");
+
+        jMenuItem1.setText("Set SSH file");
+        jMenu3.add(jMenuItem1);
+
+        jMenuItem2.setText("Set Download Folder");
+        jMenu3.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu3);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -604,6 +621,8 @@ public class MainFrame extends javax.swing.JFrame {
         if (jToggleButton1.getText().equals("Start")) {
             Runnable helloRunnable = () -> {
                 try {
+                    int initialMax = jTextArea1.getDocument().getLength();
+                    int initialCaret = jTextArea1.getCaretPosition();
                     RemoteLogViewer.getLogConnection().download(jFormattedTextField4.getText());
                     String stringToAppend = "";
                     Scanner scanner = new Scanner(new File("src/main/resources/latest.log"));
@@ -613,6 +632,8 @@ public class MainFrame extends javax.swing.JFrame {
                         count++;
                     }
                     jTextArea1.setText(stringToAppend);
+                    
+                    if (initialCaret == initialMax) jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     ErrorHandler.handleFatal(ex);
@@ -640,7 +661,7 @@ public class MainFrame extends javax.swing.JFrame {
         String password = String.valueOf(jPasswordField1.getPassword());
         String remotePath = jFormattedTextField4.getText();
         
-        FileDownloadingUtility.download(jTextArea1, remotePath);
+        FileDownloadingUtility.displayLatestLog(jTextArea1, remotePath);
         JSONCredentialUtility.saveLogCredentials(hostname, port, username, password, remotePath);  
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -728,6 +749,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
