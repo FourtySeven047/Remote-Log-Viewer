@@ -22,9 +22,9 @@ import javax.swing.JTextArea;
  */
 public class FileDownloadingUtility {
     
-    public static void download(JTextArea logArea, String remotePath) {
+    public static void displayLatestLog(JTextArea logArea, String remotePath) {
         try {
-            RemoteLogViewer.getLogConnection().download(remotePath);
+            download(remotePath);
             logArea.setText("");
             Scanner scanner = new Scanner(new File("src/main/resources/latest.log"));
             int count = 1;
@@ -39,12 +39,17 @@ public class FileDownloadingUtility {
         }
     }
     
+    public static void download(String remotePath) {
+        RemoteLogViewer.getLogConnection().download(remotePath);
+    }
+    
     public static void saveToDownloads() {
         String home = System.getProperty("user.home");
         File file = new File(home+"/Downloads/" + "latest.log"); 
         int index = 1;
         while (file.exists()) {
-            file = new File(home+"/Downloads/" + "latest.log" + index);
+            file = new File(home + "/Downloads/" + "latest" + index + ".txt");
+            index++;
         }
         try {
             FileWriter createFile;
