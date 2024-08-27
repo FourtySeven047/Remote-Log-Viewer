@@ -46,7 +46,6 @@ public class SFTPConnection {
             session.connect();
             Channel channel = session.openChannel("sftp");
             channel.connect();
-            RemoteLogViewer.setLogConnection(this);
             this.sftp = (ChannelSftp) sftp;
         } catch (JSchException ex) {
             Logger.getLogger(SFTPConnection.class.getName()).log(Level.SEVERE, null, ex);
