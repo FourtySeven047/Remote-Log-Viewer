@@ -3,6 +3,7 @@ package dev.thorben.remotelogviewer.frames;
 import dev.thorben.remotelogviewer.RemoteLogViewer;
 import dev.thorben.remotelogviewer.core.ErrorHandler;
 import dev.thorben.remotelogviewer.core.SFTPConnection;
+import dev.thorben.remotelogviewer.utils.FileDownloadingUtility;
 import dev.thorben.remotelogviewer.utils.JSONCredentialUtility;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -209,8 +210,18 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel5.setText("Remote Path:");
 
         jFormattedTextField4.setText("latest.log");
+        jFormattedTextField4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFormattedTextField4ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Save");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -572,6 +583,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         SFTPConnection connection = new SFTPConnection(hostname, port, username, password);
         connection.connect();
+        RemoteLogViewer.setLogConnection(connection);
         JSONCredentialUtility.saveLogCredentials(hostname, port, username, password, JSONCredentialUtility.getLogRemotePath());
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -617,37 +629,35 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:#
+        if (RemoteLogViewer.getLogConnection() == null) {
+            ErrorHandler.handle(new Exception("Unable to download: Not connected to a server."), "Unable to download: not connected to a server.");
+            return;
+        }
+        
         String hostname = jFormattedTextField1.getText();
         int port = Integer.parseInt(jFormattedTextField2.getText());
         String username = jFormattedTextField3.getText();
         String password = String.valueOf(jPasswordField1.getPassword());
         String remotePath = jFormattedTextField4.getText();
         
-        JSONCredentialUtility.saveLogCredentials(hostname, port, username, password, remotePath);
-        
-        if (RemoteLogViewer.getLogConnection() == null) {
-            ErrorHandler.handle(new Exception("Unable to download: Not connected to a server."), "Unable to download: not connected to a server.");
-            return;
-        }
-        try {
-            RemoteLogViewer.getLogConnection().download(jFormattedTextField4.getText());
-            jTextArea1.setText("");
-            Scanner scanner = new Scanner(new File("src/main/resources/latest.log"));
-            int count = 1;
-            while (scanner.hasNextLine()) {
-                jTextArea1.append(count + ". " + scanner.nextLine() + "\n");
-                count++;
-            }
-
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-            ErrorHandler.handleFatal(ex);
-        }
+        FileDownloadingUtility.download(jTextArea1, remotePath);
+        JSONCredentialUtility.saveLogCredentials(hostname, port, username, password, remotePath);  
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jFormattedTextField14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFormattedTextField14ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jFormattedTextField14ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        if (RemoteLogViewer.getLogConnection() == null) ErrorHandler.handleFatal(new NullPointerException("Unable to save: Not connected."));
+        RemoteLogViewer.getLogConnection().download(jFormattedTextField4.getText());
+        FileDownloadingUtility.saveToDownloads();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jFormattedTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFormattedTextField4ActionPerformed
+        // TODO add your handling code here
+    }//GEN-LAST:event_jFormattedTextField4ActionPerformed
 
     public void updateLog() {
         jTextArea1.setText("Log");
