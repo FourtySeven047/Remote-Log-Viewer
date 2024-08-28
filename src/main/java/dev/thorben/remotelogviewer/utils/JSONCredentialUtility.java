@@ -4,6 +4,7 @@
  */
 package dev.thorben.remotelogviewer.utils;
 
+import dev.thorben.remotelogviewer.core.ErrorHandler;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,6 +53,7 @@ public class JSONCredentialUtility {
             
         } catch (IOException ex) {
             Logger.getLogger(JSONCredentialUtility.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
         }
     }
     
@@ -61,8 +63,9 @@ public class JSONCredentialUtility {
             Object obj = parser.parse(new FileReader("src/main/resources/log_credentials.json"));
             return (JSONObject) obj;
           
-        } catch(IOException | ParseException e) {
-            Logger.getLogger(JSONCredentialUtility.class.getName()).log(Level.SEVERE, null, e);
+        } catch(IOException | ParseException ex) {
+            Logger.getLogger(JSONCredentialUtility.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
         }
         return null;
     }
@@ -73,8 +76,9 @@ public class JSONCredentialUtility {
             Object obj = parser.parse(new FileReader("src/main/resources/file_credentials.json"));
             return (JSONObject) obj;
           
-        } catch(IOException | ParseException e) {
-            Logger.getLogger(JSONCredentialUtility.class.getName()).log(Level.SEVERE, null, e);
+        } catch(IOException | ParseException ex) {
+            Logger.getLogger(JSONCredentialUtility.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
         }
         return null;
     }
