@@ -37,6 +37,38 @@ public class JSONSettingUtility {
             ErrorHandler.handleFatal(ex);
         }
     }
+    
+    public static void setSSHFilePath(String newPath) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("ssh_file", newPath);
+        jsonObject.put("download_folder", getDownloadFolderPath());
+        
+        try {
+            FileWriter writer = new FileWriter("src/main/resources/config.json");
+            writer.write(jsonObject.toJSONString());
+            writer.close();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(JSONCredentialUtility.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
+        }
+    }
+    
+    public static void setDownloadFolderPath(String newPath) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("ssh_file", getSSHFilePath());
+        jsonObject.put("download_folder", newPath);
+        
+        try {
+            FileWriter writer = new FileWriter("src/main/resources/config.json");
+            writer.write(jsonObject.toJSONString());
+            writer.close();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(JSONCredentialUtility.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorHandler.handleFatal(ex);
+        }
+    }
      
     public static String getSSHFilePath() {
        JSONParser parser = new JSONParser();
