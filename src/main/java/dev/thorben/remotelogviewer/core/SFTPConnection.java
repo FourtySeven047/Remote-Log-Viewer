@@ -77,7 +77,7 @@ public class SFTPConnection {
 
     public void upload(String localFile, String remotePath) {
         try {
-            sftp.put(localFile, remotePath);
+            sftp.put(localFile, "./" + remotePath);
         } catch (SftpException ex) {
             Logger.getLogger(SFTPConnection.class.getName()).log(Level.SEVERE, null, ex);
             ErrorHandler.handleFatal(ex);
