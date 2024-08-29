@@ -25,7 +25,7 @@ Remote Log Viewer (RLV) is a Desktop Application with the initial intention to v
 Please download the newest version from [here](https://www.google.com/). Place the folder anywhere you like.
 To start the application you just need to open the .jar file by clicking or in the command line:
 ```bash
-java -jar RLV-1.0.0.jar
+java -jar RemoteLogViewer-1.0.0-beta.jar
 ```
 You may need to use root priviliges to execute the file in Linux.
 
